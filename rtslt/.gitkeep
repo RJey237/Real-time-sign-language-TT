@@ -1,0 +1,85 @@
+# ============================================================================
+# Git Repository Setup Script for ASL Translator
+# Run this in PowerShell from your project root directory
+# ============================================================================
+
+Write-Host "=" * 70 -ForegroundColor Cyan
+Write-Host "ASL Translator - Git Repository Setup" -ForegroundColor Cyan
+Write-Host "=" * 70 -ForegroundColor Cyan
+
+# Create .gitkeep files to preserve empty directories
+Write-Host "`nCreating directory structure..." -ForegroundColor Yellow
+
+# Create directories
+$directories = @(
+    "data",
+    "ml_models/saved_models",
+    "static/css",
+    "static/js",
+    "templates/translator",
+    "logs"
+)
+
+foreach ($dir in $directories) {
+    if (-not (Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+        Write-Host "  [+] Created: $dir" -ForegroundColor Green
+    } else {
+        Write-Host "  [✓] Exists: $dir" -ForegroundColor Gray
+    }
+    
+    # Create .gitkeep file
+    $gitkeep = Join-Path $dir ".gitkeep"
+    if (-not (Test-Path $gitkeep)) {
+        New-Item -ItemType File -Path $gitkeep -Force | Out-Null
+        Write-Host "      └─ .gitkeep created" -ForegroundColor Green
+    }
+}
+
+# Check if .gitignore exists
+if (-not (Test-Path ".gitignore")) {
+    Write-Host "`n⚠️  .gitignore not found!" -ForegroundColor Red
+    Write-Host "Please copy the .gitignore content from the artifact." -ForegroundColor Yellow
+} else {
+    Write-Host "`n✓ .gitignore exists" -ForegroundColor Green
+}
+
+# Initialize git if not already initialized
+if (-not (Test-Path ".git")) {
+    Write-Host "`nInitializing Git repository..." -ForegroundColor Yellow
+    git init
+    Write-Host "✓ Git initialized" -ForegroundColor Green
+} else {
+    Write-Host "`n✓ Git repository already initialized" -ForegroundColor Green
+}
+
+# Check git status
+Write-Host "`n" + "=" * 70 -ForegroundColor Cyan
+Write-Host "Current Git Status:" -ForegroundColor Cyan
+Write-Host "=" * 70 -ForegroundColor Cyan
+git status --short
+
+# Summary
+Write-Host "`n" + "=" * 70 -ForegroundColor Cyan
+Write-Host "Setup Complete!" -ForegroundColor Green
+Write-Host "=" * 70 -ForegroundColor Cyan
+
+Write-Host "`n📁 Directory structure created with .gitkeep files"
+Write-Host "🔒 .gitignore configured to exclude:"
+Write-Host "   - Dataset files (data/)"
+Write-Host "   - Trained models (*.h5, *.pkl)"
+Write-Host "   - Virtual environments (venv/)"
+Write-Host "   - Cache files (__pycache__/)"
+
+Write-Host "`n📝 Next Steps:" -ForegroundColor Yellow
+Write-Host "   1. git add ." -ForegroundColor White
+Write-Host "   2. git commit -m 'Initial commit: Project structure'" -ForegroundColor White
+Write-Host "   3. git remote add origin <your-repo-url>" -ForegroundColor White
+Write-Host "   4. git push -u origin main" -ForegroundColor White
+
+Write-Host "`n⚠️  Remember:" -ForegroundColor Yellow
+Write-Host "   - Download datasets separately (not in git)" -ForegroundColor White
+Write-Host "   - Train models locally (not in git)" -ForegroundColor White
+Write-Host "   - Share model files via cloud storage if needed" -ForegroundColor White
+
+Write-Host "`n" + "=" * 70 -ForegroundColor Cyan
