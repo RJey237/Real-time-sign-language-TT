@@ -53,8 +53,7 @@
 - **Sequence Length**: 10 frames
 - **Total Parameters**: 196,381
 - **Best Epoch**: 35 (restored by early stopping)
-
-### Training Progress
+- [ ] Training Progress
 
 EpochTrain AccVal AccLossVal Loss160.69%81.65%1.130.561097.43%96.48%0.090.132399.47%99.83%0.020.0043599.90%99.97%0.0040.0045099.95%99.96%0.0020.009
 

@@ -4,7 +4,7 @@
 
  **Project** : Real-Time Sign Language to Text Translator
 
- **Week** : October 21-28, 2025
+ **Week** : 15-11-2025
 
  **Status** : ✅ COMPLETE
 
@@ -493,7 +493,7 @@ Week 2 Deliverables:
 
 ---
 
- **Week 2 Status** : ✅ COMPLETE - Ready for Week 3 (Training)
+**Week 2 Status** : ✅ COMPLETE - Ready for Week 3 (Training)
 
  **Date Completed** : October 28, 2025
 

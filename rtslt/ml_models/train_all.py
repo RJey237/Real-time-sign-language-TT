@@ -13,7 +13,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ml_models.data_preprocessing import LandmarkExtractor, augment_landmarks
 from ml_models.train_baseline import train_baseline_model
-from ml_models.train_lstm import train_lstm_model
+
+# Import improved LSTM trainer
+from train_improved_lstm import train_improved_lstm
 
 
 def main():
@@ -41,7 +43,7 @@ def main():
         print("Processing dataset (this may take a while)...")
         extractor = LandmarkExtractor()
         X, y = extractor.process_dataset(
-            data_dir='data/asl_alphabet/asl_alphabet_train',
+            data_dir=r'D:\New folder\General\University\4.1\Computer vision\project\Real-time-sign-language-TT\rtslt\data\asl_alphabet\asl_alphabet_train',
             output_file='data/processed_data.pkl'
         )
         extractor.close()
@@ -63,23 +65,24 @@ def main():
     )
     print(f"✓ Baseline model saved to 'ml_models/saved_models/baseline_mlp.pkl'")
     
-    # Step 4: Train LSTM model
-    print("\n[4/4] Training LSTM model...")
-    print("This will take longer (10-30 minutes depending on your hardware)...")
-    lstm, le_lstm, history = train_lstm_model(
+    # Step 4: Train improved LSTM model
+    print("\n[4/4] Training improved LSTM model...")
+    print("This will take longer (20-40 minutes depending on your hardware)...")
+    lstm, le_lstm, history = train_improved_lstm(
         X, y,
         sequence_length=10,
         model_path='ml_models/saved_models/lstm_model.h5'
     )
-    print(f"✓ LSTM model saved to 'ml_models/saved_models/lstm_model.h5'")
-    print(f"✓ Label encoder saved to 'ml_models/saved_models/label_encoder.pkl'")
+    print(f"✓ Improved LSTM model saved to 'ml_models/saved_models/lstm_model.h5'")
+    encoder_path = 'ml_models/saved_models/lstm_model_label_encoder.pkl'
+    print(f"✓ Label encoder saved to '{encoder_path}'")
     
     # Summary
     print("\n" + "=" * 80)
     print("TRAINING COMPLETE!")
     print("=" * 80)
     print(f"📊 Baseline MLP Accuracy: {baseline_acc:.2%}")
-    print(f"📊 LSTM Accuracy: {history.history['val_accuracy'][-1]:.2%}")
+    print(f"📊 Improved LSTM Accuracy: {history.history['val_accuracy'][-1]:.2%}")
     print("\n📁 Models saved in: ml_models/saved_models/")
     print("\n🚀 Next step: Run 'python manage.py runserver' to start the web app")
     print("=" * 80)
