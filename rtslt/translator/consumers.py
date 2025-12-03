@@ -48,6 +48,7 @@ class ASLConsumer(AsyncWebsocketConsumer):
             
             if data['type'] == 'landmarks':
                 has_hands = data.get('has_hands', True)
+                print(f"[ASL] Received landmarks - has_hands: {has_hands}, buffer_size: {len(self.predictor.sequence_buffer)}")
                 
                 # If no hands detected, reset buffer and don't predict
                 if not has_hands:
@@ -58,8 +59,10 @@ class ASLConsumer(AsyncWebsocketConsumer):
                 
                 # Make prediction
                 label, confidence, latency = self.predictor.predict(landmarks, has_hands=True)
+                print(f"[ASL] Prediction result: label={label}, confidence={confidence}, latency={latency}ms")
                 
                 if label is not None:
+                    print(f"[ASL] Sending prediction: {label} ({confidence:.2%})")
                     await self.send(text_data=json.dumps({
                         'type': 'prediction',
                         'label': label,
@@ -74,6 +77,7 @@ class ASLConsumer(AsyncWebsocketConsumer):
                 }))
         
         except Exception as e:
+            print(f"[ASL Error] {e}")
             await self.send(text_data=json.dumps({
                 'type': 'error',
                 'message': str(e)

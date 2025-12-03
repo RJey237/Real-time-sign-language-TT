@@ -76,8 +76,9 @@ class ASLPredictor:
             if len(self.sequence_buffer) < self.sequence_length:
                 return None, 0.0, 0
             
-            # Predict
-            sequence = np.array([self.sequence_buffer])
+            # Predict - model expects (None, 126), not (None, 10, 126)
+            # So we use the LAST frame, not the whole sequence
+            sequence = np.array([landmarks])  # Shape: (1, 126)
             predictions = self.model.predict(sequence, verbose=0)
             confidence = float(np.max(predictions))
             predicted_idx = int(np.argmax(predictions))

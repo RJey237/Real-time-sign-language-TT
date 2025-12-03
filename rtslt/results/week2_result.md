@@ -225,9 +225,9 @@ Good for training (prevents bias)
 
 **Mitigation Strategies:**
 
-* Data augmentation (rotation, scaling, noise)
-* Landmark normalization
-* Focus on hand landmarks (ignore background)
+* [ ] Data augmentation (rotation, scaling, noise)
+* [ ] Landmark normalization
+* [ ] Focus on hand landmarks (ignore background)
 
 #### Landmark Extraction Testing:
 
