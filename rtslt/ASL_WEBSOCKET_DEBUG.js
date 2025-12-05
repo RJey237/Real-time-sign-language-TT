@@ -70,7 +70,7 @@ const onResults = (results) => {
   // ... existing code ...
   
   const now = performance.now();
-  if (now - lastSentLandmarksRef.current > 100) {
+  if (now - lastSentLandmarksRef.current > 50) {  // 50ms = 20 FPS for faster detection
     if (all.length > 0) {
       const flat = [];
       for (let h = 0; h < Math.min(2, all.length); h++) {

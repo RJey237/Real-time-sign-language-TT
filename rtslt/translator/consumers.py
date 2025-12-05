@@ -14,8 +14,16 @@ class ASLConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.predictor = None
+        self.current_id = None
     
     async def connect(self):
+        # Get current user's ID from query string
+        try:
+            qs = parse_qs((self.scope.get('query_string') or b'').decode())
+            self.current_id = qs.get('self', [None])[0]
+        except Exception:
+            pass
+        
         await self.accept()
         
         # Initialize predictor
@@ -42,13 +50,12 @@ class ASLConsumer(AsyncWebsocketConsumer):
         pass
     
     async def receive(self, text_data):
-        """Receive landmarks from client and send prediction"""
+        """Receive landmarks from client and send prediction to chat room"""
         try:
             data = json.loads(text_data)
             
             if data['type'] == 'landmarks':
                 has_hands = data.get('has_hands', True)
-                print(f"[ASL] Received landmarks - has_hands: {has_hands}, buffer_size: {len(self.predictor.sequence_buffer)}")
                 
                 # If no hands detected, reset buffer and don't predict
                 if not has_hands:
@@ -59,16 +66,18 @@ class ASLConsumer(AsyncWebsocketConsumer):
                 
                 # Make prediction
                 label, confidence, latency = self.predictor.predict(landmarks, has_hands=True)
-                print(f"[ASL] Prediction result: label={label}, confidence={confidence}, latency={latency}ms")
                 
-                if label is not None:
-                    print(f"[ASL] Sending prediction: {label} ({confidence:.2%})")
-                    await self.send(text_data=json.dumps({
-                        'type': 'prediction',
-                        'label': label,
-                        'confidence': confidence,
-                        'latency': latency
-                    }))
+                if label is not None and confidence > 0.70:  # Higher threshold for better accuracy
+                    # Send to chat room for broadcasting
+                    if self.current_id:
+                        # Create room name based on sorted IDs (same as ChatConsumer)
+                        # For now, just send back to client and let chat handle broadcasting
+                        await self.send(text_data=json.dumps({
+                            'type': 'prediction',
+                            'label': label,
+                            'confidence': confidence,
+                            'latency': latency
+                        }))
             
             elif data['type'] == 'reset':
                 self.predictor.reset_sequence()
@@ -77,7 +86,6 @@ class ASLConsumer(AsyncWebsocketConsumer):
                 }))
         
         except Exception as e:
-            print(f"[ASL Error] {e}")
             await self.send(text_data=json.dumps({
                 'type': 'error',
                 'message': str(e)
